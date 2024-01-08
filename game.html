@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Which Gossip Girl character are you?</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #97d1e0;
+        }
+
+        .quiz-container {
+            background-color: #c5bfcc;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .question {
+            margin-bottom: 20px;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .option {
+            background-color: #b487eb;
+            border: 2px solid #ffffff;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            border: 2px solid #ffffff;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #d8c9ee;
+        }
+
+    </style>
+
+</head>
+<body>
+<div class="quiz-container">
+    <h1 id="quiz-title">Gossip Girl Character Quiz</h1>
+    <div class="question" id="question1"></div>
+    <div class="options">
+        <div class="option" id="option1" onclick="selectOption(1)"></div>
+        <div class="option" id="option2" onclick="selectOption(2)"></div>
+        <div class="option" id="option3" onclick="selectOption(3)"></div>
+        <div class="option" id="option4" onclick="selectOption(4)"></div>
+    </div>
+    <div class="result" id="result"></div>
+</div>
+
+<script>
+    //Defining the questions that will be displayed along with the different options
+    const questions = [
+        {
+            question: "Where would you rather hang out?", //1
+            options: [
+                "Upper East Side rooftop",  //Blair
+                "Local coffee shop", // Nate
+                "Downtown", // Dan
+                "Private exclusive club" //Chuck
+            ]
+        },
+        {
+            question: "Which is your  style?", //2
+            options: [
+                "Classic and elegant", //Blair
+                "Bohemian chic", //Serena
+                "Skateboard vibe", //Dan
+                "Preppy and polished"  //Chuck and Nate
+            ]
+        },
+        {
+            question: "A complement for your outfit:", //3
+            options: [
+                "Statement necklace", //Blair
+                "Designer handbag", //Serena
+                "Vintage scarf", //Chuck
+                "Luxury watch" //Nate
+            ]
+        },
+        {
+            question: "Ideal weekend getaway?", //4
+            options: [
+                "Beach resort", //Nate
+                "European city", //Serena
+                "Mountain cabin", //Dan
+                "Exclusive spa retreat" //Blair
+            ]
+        },
+        {
+            question: "Who are you most likely to trust?", //5
+            options: [
+                "Blair", //Chuck
+                "Serena", //Dan
+                "Chuck",//Blair and Nate
+                "Dan" //Serena
+            ]
+        },
+        {
+            question: "How would you describe your personality?", //6
+            options: [
+                "Life of the party", //Serena
+                "Queen Bee", //Blair
+                "Business centric", //Chuck
+                "Easy going and friendly" //Nate and Dan
+            ]
+        },
+        {
+            question: "What are you most likely to study?", //7
+            options: [
+                "Psychology", //Blair and Serena
+                "Literature", //Dan
+                "Business", //Nate
+                "No need, work right away" //Chuck
+            ]
+        },
+        {
+            question: "What is the perfect gift?", //8
+            options: [
+                "A book", // Dan
+                "Jewelry", //Blair
+                "An experience", //Nate and Serena
+                "Surprise exclusive party" //Chuck
+            ]
+        },
+        {
+            question: "What is your favorite color?", //9
+            options: [
+                "Purple", //Chuck
+                "Red", //Blair
+                "Yellow", //Serena
+                "Blue" //Dan and Nate
+            ]
+        },
+        {
+            question: "What is your favorite holiday?", //10
+            options: [
+                "Thanksgiving", //Blair
+                "Christmas", //Serena and Dan
+                "New Year", //Chuck
+                "Easter" //Nate
+            ]
+        }
+    ];
+
+    //Assigning the options a corresponding character so that the character with the most
+    //amount of points is displayed at the end
+    const characterPointsMapping = [
+        // Mapping for Question 1 - Where would you rather hang out?
+        [
+            { characterIndex: [1], points: 1 }, // Blair
+            { characterIndex: [4], points: 1 }, // Nate
+            { characterIndex: [3], points: 1 }, // Dan
+            { characterIndex: [2], points: 1 }, // Chuck
+        ],
+        // Mapping for Question 2 - Which is your style?
+        [
+            { characterIndex: [1], points: 1 }, // Blair
+            { characterIndex: [0], points: 1 }, // Serena
+            { characterIndex: [3], points: 1 }, // Dan
+            { characterIndex: [2, 4], points: 1 }, // Chuck and Nate
+        ],
+        // Mapping for Question 3 - Complement for outfit?
+        [
+            { characterIndex: [1], points: 1 }, // Blair
+            { characterIndex: [0], points: 1 }, // Serena
+            { characterIndex: [2], points: 1 }, // Chuck
+            { characterIndex: [4], points: 1 }, // Nate
+        ],
+        // Mapping for Question 4 - Weekend gateway?
+        [
+            { characterIndex: [4], points: 1 }, // Nate
+            { characterIndex: [0], points: 1 }, // Serena
+            { characterIndex: [3], points: 1 }, // Dan
+            { characterIndex: [1], points: 1 }, // Blair
+        ],
+        // Mapping for Question 5 - Most likely to trust?
+        [
+            { characterIndex: [2], points: 1 }, // Chuck
+            { characterIndex: [3], points: 1 }, // Dan
+            { characterIndex: [1, 4], points: 1 }, // Blair and Nate
+            { characterIndex: [0], points: 1 }, // Serena
+        ],
+        // Mapping for Question 6 - Personality?
+        [
+            { characterIndex: [0], points: 1 }, // Serena
+            { characterIndex: [1], points: 1 }, // Blair
+            { characterIndex: [2], points: 1 }, // Chuck
+            { characterIndex: [3, 4], points: 1 }, // Nate and Dan
+        ],
+        // Mapping for Question 7 - Study?
+        [
+            { characterIndex: [0, 1], points: 1 }, // Serena and Blai
+            { characterIndex: [3], points: 1 }, // Dan
+            { characterIndex: [4], points: 1 }, // Nate
+            { characterIndex: [2], points: 1 }, // Chuck
+        ],
+        // Mapping for Question 8 - Gift?
+        [
+            { characterIndex: [3], points: 1 }, // Dan
+            { characterIndex: [1], points: 1 }, // Blair
+            { characterIndex: [4, 0], points: 1 }, // Nate and Serena
+            { characterIndex: [2], points: 1 }, // Chuck
+        ],
+        // Mapping for Question 9 - Color?
+        [
+            { characterIndex: [2], points: 1 }, // Chuck
+            { characterIndex: [1], points: 1 }, // Blair
+            { characterIndex: [0], points: 1 }, //Serena
+            { characterIndex: [3, 4], points: 1 }, // Dan and Nate
+        ],
+        // Mapping for Question 10 - Holiday?
+        [
+            { characterIndex: [1], points: 1 }, //Blair
+            { characterIndex: [0, 3], points: 1 }, //Serena and Dan
+            { characterIndex: [2], points: 1 }, //Chuck
+            { characterIndex: [4], points: 1 }, //Nate
+        ]
+
+    ];
+
+    //Possible options of Gossip Girl Characters with the initializations of points equal to 0
+    const results = [
+        {name: "Serena van der Woodsen", points: 0}, //0
+        {name: "Blair Waldorf", points: 0}, //1
+        {name: "Chuck Bass", points: 0}, //2
+        {name: "Dan Humphrey", points: 0}, //3
+        {name: "Nate Vanderbilt", points: 0} //4
+    ];
+
+    //Keep track of the questions and answers provided by user
+    let currentQuestion = 0;
+    let answers = [];
+
+    //This function displays the question and its options on the screen
+    function displayQuestion() {
+        const questionElement = document.getElementById('question1');
+        const optionElements = document.querySelectorAll('.option');
+
+        //Keep going until the last question
+        if (currentQuestion < questions.length) {
+            questionElement.innerText = questions[currentQuestion].question;
+            //Displays all the options
+            for (let i = 0; i < optionElements.length; i++) {
+                optionElements[i].innerText = questions[currentQuestion].options[i];
+            }
+        }
+    }
+
+    //This function adds points to characters when an option is selected
+    //Makes selecting the options the prompt to either move to the next question or show the results
+    function selectOption(optionNumber) {
+        answers.push(optionNumber); //put answer into answers array defined earlier
+
+        //Gets the number of points associated to the question and option
+        const characterPoints = characterPointsMapping[currentQuestion][optionNumber - 1];
+
+        // Add points to characters based on selected option
+        for (let i = 0; i < characterPoints.characterIndex.length; i++) {
+            const characterIndex = characterPoints.characterIndex[i];
+            const character = results[characterIndex];
+            character.points += characterPoints.points;
+        }
+
+        currentQuestion++; //Move to the next question
+
+        if (currentQuestion < questions.length) {
+            displayQuestion();
+        } else {
+            showResult(); //Display the results after the last question is answered
+        }
+    }
+
+    //This function displays the result that was obtained by choosing the character with
+    //the most amount of points
+    function showResult() {
+        const resultElement = document.getElementById('result');
+
+        const resultIndex = calculateResult(); //Get the character to display
+
+        if (resultIndex !== -1) {
+            resultElement.innerText = `You resemble ${results[resultIndex].name}!`;
+        } else {
+            resultElement.innerText = "Could not determine the result.";
+        }
+
+        document.getElementById('question1').innerHTML = ''; // Clear question
+        document.querySelector('.options').innerHTML = ''; // Clear options
+    }
+
+    //This function adds up the points to the characters and finds who has the highest
+    function calculateResult() {
+        const characterOccurrences = Array(results.length).fill(0);
+
+        for (let i = 0; i < answers.length; i++) {
+            const characterIndex = characterPointsMapping[i][answers[i] - 1].characterIndex;
+
+            for (let index of characterIndex) {
+                characterOccurrences[index]++;
+            }
+        }
+
+        // Find the character with the most occurrences
+        let maxOccurrences = -1;
+        let winningCharacter = -1;
+
+        for (let i = 0; i < characterOccurrences.length; i++) {
+            if (characterOccurrences[i] > maxOccurrences) {
+                maxOccurrences = characterOccurrences[i];
+                winningCharacter = i;
+            }
+        }
+
+        return winningCharacter;
+    }
+
+
+    // Display the first question when the page loads
+    displayQuestion();
+
+</script>
+
+</body>
+</html>
